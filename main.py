@@ -1,28 +1,27 @@
 from google.cloud import logging
-from datetime import datetime
-import time
+from flask import Flask, render_template
+import random
 
+app = Flask(__name__)
 
 logging_client = logging.Client()
 logger = logging_client.logger("demo-log")
 
-while True:
+
+@app.route("/")
+def hello_world():
     logger.log_struct(
-        {"message": "Request made.", "key": "value", "num": 12}, severity="DEBUG"
+        {"message": "Request made.", "key": "value", "num": random.randint(0,50)}, severity="DEBUG"
     )
-    time.sleep(1)
     logger.log_struct(
         {"message": "A user has logged in.", "username": "testuser"}, severity="INFO"
     )
-    time.sleep(1)
-    logger.log_struct({"message": "Low disk space.", "size": 25}, severity="WARNING")
-    time.sleep(1)
+    logger.log_struct({"message": "Low disk space.", "size": random.randint(0,100)}, severity="WARNING")
     logger.log_struct(
         {"message": "Error connecting to database.", "dbname": "maindb"},
         severity="ERROR",
     )
-    time.sleep(1)
     logger.log_struct(
-        {"message": "Application crashed.", "code": 12345}, severity="CRITICAL"
+        {"message": "Application crashed.", "code": random.randint(1111,9999)}, severity="CRITICAL"
     )
-    time.sleep(1)
+    return render_template("index.html")
